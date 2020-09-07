@@ -1,0 +1,54 @@
+# ===================================================================
+# Spring Boot config.
+#
+# This config will be overridden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+logging:
+  level:
+    ROOT: INFO
+    com.example.managementsystem: DEBUG
+
+spring:
+  application.name: Management System
+  jackson.mapper.default-view-inclusion: true
+  servlet.multipart.max-file-size: 5MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/management_system
+    username: sa
+    password: sapass
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+  flyway:
+    locations: classpath:db/{vendor}/migration
+
+server:
+  port: 9090
+  servlet:
+    contextPath: /api
+#        session:
+#            cookie:
+#                http-only: true
+#
+# Properties to be exposed on the /info management endpoint
+#info:
+#     Comma separated list of profiles that will trigger the ribbon to show
+#    display-ribbon-on-profiles: ["local", "development"]
+
+# ===================================================================
+# Application specific properties
+# ===================================================================
+#application:
