@@ -49,15 +49,15 @@ dependencies {
     testRuntime 'com.h2database:h2'
 }
 
-import groovy.json.JsonSlurper
-
-task smokeTest() {
-    doLast {
-        def p = ['curl', '$smokeTestUrl/api/actuator/health', '--insecure'].execute()
-        def jsonSlurper = new JsonSlurper()
-        def health = jsonSlurper.parseText(p.text)
-        if (health?.status != 'UP') {
-            throw new RuntimeException('Healthcheck failed')
-        }
-    }
-}
+//import groovy.json.JsonSlurper
+//
+//task smokeTest() {
+//    doLast {
+//        def p = ['curl', '$smokeTestUrl/api/actuator/health', '--insecure'].execute()
+//        def jsonSlurper = new JsonSlurper()
+//        def health = jsonSlurper.parseText(p.text)
+//        if (health?.status != 'UP') {
+//            throw new RuntimeException('Healthcheck failed')
+//        }
+//    }
+//}
