@@ -31,7 +31,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
 //                .paths(PathSelectors.ant("/v1*"))
-                .apis(RequestHandlerSelectors.basePackage("com.example.managementsystem"))
+                .apis(RequestHandlerSelectors.basePackage("com.estore.authenticationauthorizationservice"))
                 .build()
                 .apiInfo(apiInfoDetails())
                 .useDefaultResponseMessages(false)

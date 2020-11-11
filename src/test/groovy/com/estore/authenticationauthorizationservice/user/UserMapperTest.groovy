@@ -1,7 +1,14 @@
 package com.estore.authenticationauthorizationservice.user
 
-
+import com.estore.authenticationauthorizationservice.client.ClientEntity
+import com.estore.authenticationauthorizationservice.client.ClientMapper
+import com.estore.authenticationauthorizationservice.role.RoleEntity
+import com.estore.authenticationauthorizationservice.role.RoleMapper
 import com.estore.authenticationauthorizationservice.client.dto.ClientDto
+import com.estore.authenticationauthorizationservice.role.dto.RoleDto
+import com.estore.authenticationauthorizationservice.user.dto.UserCreationDto
+import com.estore.authenticationauthorizationservice.user.dto.UserDto
+import com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -9,11 +16,10 @@ import java.time.Instant
 
 class UserMapperTest extends Specification {
 
-    com.estore.authenticationauthorizationservice.role.RoleMapper mockRoleMapper = Mock(com.estore.authenticationauthorizationservice.role.RoleMapper.class)
-    com.estore.authenticationauthorizationservice.client.ClientMapper mockClientMapper = Mock(com.estore.authenticationauthorizationservice.client.ClientMapper.class)
-    com.estore.authenticationauthorizationservice.structure.StructureLevelMapper mockStructureLevelMapper = Mock(com.estore.authenticationauthorizationservice.structure.StructureLevelMapper.class)
+    RoleMapper mockRoleMapper = Mock(RoleMapper.class)
+    ClientMapper mockClientMapper = Mock(ClientMapper.class)
     @Subject
-    UserMapper userMapper = new UserMapperImpl(roleMapper: mockRoleMapper, clientMapper: mockClientMapper, structureLevelMapper: mockStructureLevelMapper)
+    UserMapper userMapper = new UserMapperImpl(roleMapper: mockRoleMapper, clientMapper: mockClientMapper)
 
     def "should convert from entity to dto"() {
         given:
@@ -28,9 +34,8 @@ class UserMapperTest extends Specification {
         userEntity.username = 'USERNAME'
         userEntity.password = 'PASSWORD'
         userEntity.enabled = true
-        userEntity.role = new com.estore.authenticationauthorizationservice.role.RoleEntity()
-        userEntity.client = new com.estore.authenticationauthorizationservice.client.ClientEntity()
-        userEntity.structureLevel = new com.estore.authenticationauthorizationservice.structure.StructureLevelEntity()
+        userEntity.role = new RoleEntity()
+        userEntity.client = new ClientEntity()
         userEntity.createdBy = ''
         userEntity.createdDate = createdDate
 
@@ -38,11 +43,10 @@ class UserMapperTest extends Specification {
         def userDto = userMapper.toUserDto(userEntity)
 
         then:
-        1 * mockRoleMapper.toRoleDto(_ as com.estore.authenticationauthorizationservice.role.RoleEntity) >> com.estore.authenticationauthorizationservice.role.dto.RoleDto.builder().build()
-        1 * mockStructureLevelMapper.toStructureLevelDto(_ as com.estore.authenticationauthorizationservice.structure.StructureLevelEntity) >> com.estore.authenticationauthorizationservice.structure.dto.StructureLevelDto.builder().build()
+        1 * mockRoleMapper.toRoleDto(_ as RoleEntity) >> RoleDto.builder().build()
 
         expect:
-        assert userDto instanceof com.estore.authenticationauthorizationservice.user.dto.UserDto
+        assert userDto instanceof UserDto
         userDto.id == id
         userDto.name == 'NAME'
         userDto.nameAr == 'NAME_AR'
@@ -51,14 +55,13 @@ class UserMapperTest extends Specification {
         userDto.username == 'USERNAME'
         userDto.enabled
         userDto.role != null
-        userDto.structureLevel != null
         userDto.createdBy == ''
         userDto.createdDate == createdDate
     }
 
     def "should convert from creation dto to entity"() {
         given:
-        def userDto = com.estore.authenticationauthorizationservice.user.dto.UserCreationDto.builder()
+        def userDto = UserCreationDto.builder()
                 .name('NAME')
                 .nameAr('NAME_AR')
                 .contactInfo('{}')
@@ -73,7 +76,7 @@ class UserMapperTest extends Specification {
         def userEntity = userMapper.toEntity(userDto)
 
         then:
-        1 * mockClientMapper.toEntity(_ as ClientDto) >> new com.estore.authenticationauthorizationservice.client.ClientEntity()
+        1 * mockClientMapper.toEntity(_ as ClientDto) >> new ClientEntity()
 
         expect:
         assert userEntity instanceof UserEntity
@@ -90,7 +93,7 @@ class UserMapperTest extends Specification {
     def "should convert from updating dto to entity"() {
         def id = UUID.randomUUID()
         given:
-        def userDto = com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto.builder()
+        def userDto = UserUpdatingDto.builder()
                 .id(id)
                 .name('NAME')
                 .nameAr('NAME_AR')
@@ -120,7 +123,7 @@ class UserMapperTest extends Specification {
         given:
         def id = UUID.randomUUID()
         def createdDate = Instant.now()
-        def userDto = com.estore.authenticationauthorizationservice.user.dto.UserDto.builder()
+        def userDto = UserDto.builder()
                 .id(id)
                 .name('NAME')
                 .nameAr('NAME_AR')
@@ -128,8 +131,7 @@ class UserMapperTest extends Specification {
                 .properties('{}')
                 .username('USERNAME')
                 .enabled(true)
-                .role(com.estore.authenticationauthorizationservice.role.dto.RoleDto.builder().build())
-                .structureLevel(com.estore.authenticationauthorizationservice.structure.dto.StructureLevelDto.builder().build())
+                .role(RoleDto.builder().build())
                 .createdBy('')
                 .createdDate(createdDate)
                 .build()
@@ -138,8 +140,7 @@ class UserMapperTest extends Specification {
         def userEntity = userMapper.toEntity(userDto)
 
         then:
-        1 * mockRoleMapper.toEntity(_ as com.estore.authenticationauthorizationservice.role.dto.RoleDto) >> new com.estore.authenticationauthorizationservice.role.RoleEntity()
-        1 * mockStructureLevelMapper.toEntity(_ as com.estore.authenticationauthorizationservice.structure.dto.StructureLevelDto) >> new com.estore.authenticationauthorizationservice.structure.StructureLevelEntity()
+        1 * mockRoleMapper.toEntity(_ as RoleDto) >> new RoleEntity()
 
         expect:
         assert userEntity instanceof UserEntity
@@ -151,7 +152,6 @@ class UserMapperTest extends Specification {
         userEntity.username == 'USERNAME'
         userEntity.enabled
         userEntity.role != null
-        userEntity.structureLevel != null
         userEntity.createdBy == ''
         userEntity.createdDate == createdDate
     }

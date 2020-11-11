@@ -1,9 +1,13 @@
 package com.estore.authenticationauthorizationservice.user
 
-
 import com.estore.authenticationauthorizationservice.authentication.AuthenticationUser
 import com.estore.authenticationauthorizationservice.client.ClientEntity
 import com.estore.authenticationauthorizationservice.client.dto.ClientDto
+import com.estore.authenticationauthorizationservice.user.dto.UserCreationDto
+import com.estore.authenticationauthorizationservice.user.dto.UserDto
+import com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto
+import com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException
+import com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -26,7 +30,7 @@ class UserServiceTest extends Specification {
 
     def "should save a new user"() {
         given:
-        com.estore.authenticationauthorizationservice.user.dto.UserCreationDto user = com.estore.authenticationauthorizationservice.user.dto.UserCreationDto.builder()
+        UserCreationDto user = UserCreationDto.builder()
                 .name('NAME')
                 .nameAr('NAME_AR')
                 .username('TEST')
@@ -38,8 +42,8 @@ class UserServiceTest extends Specification {
 
         then:
         1 * mockUserRepository.findOneByUsernameIgnoreCase('TEST') >> Optional.empty()
-        1 * mockUserMapper.toEntity(_ as com.estore.authenticationauthorizationservice.user.dto.UserCreationDto) >> { args ->
-            def uDto = args.get(0) as com.estore.authenticationauthorizationservice.user.dto.UserCreationDto
+        1 * mockUserMapper.toEntity(_ as UserCreationDto) >> { args ->
+            def uDto = args.get(0) as UserCreationDto
             UserEntity u = new UserEntity()
             u.setName(uDto.name)
             u.setNameAr(uDto.nameAr)
@@ -55,7 +59,7 @@ class UserServiceTest extends Specification {
         }
         1 * mockUserMapper.toUserDto(_ as UserEntity) >> { args ->
             def u = args.get(0) as UserEntity
-            com.estore.authenticationauthorizationservice.user.dto.UserDto.builder().id(u.id).name(u.name).nameAr(u.nameAr).build()
+            UserDto.builder().id(u.id).name(u.name).nameAr(u.nameAr).build()
         }
 
         expect:
@@ -66,7 +70,7 @@ class UserServiceTest extends Specification {
 
     def "should not save a new user if username already exists"() {
         given:
-        com.estore.authenticationauthorizationservice.user.dto.UserCreationDto user = com.estore.authenticationauthorizationservice.user.dto.UserCreationDto.builder()
+        UserCreationDto user = UserCreationDto.builder()
                 .name('NAME')
                 .nameAr('NAME_AR')
                 .username('TEST')
@@ -78,16 +82,16 @@ class UserServiceTest extends Specification {
 
         then:
         1 * mockUserRepository.findOneByUsernameIgnoreCase('TEST') >> Optional.of(new UserEntity())
-        0 * mockUserMapper.toEntity(_ as com.estore.authenticationauthorizationservice.user.dto.UserCreationDto)
+        0 * mockUserMapper.toEntity(_ as UserCreationDto)
         0 * mockUserRepository.save(_ as UserEntity)
         0 * mockUserMapper.toUserDto(_ as UserEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException)
+        thrown(ResourceKeyValueAlreadyExistsException)
     }
 
     def "should update an existing user"() {
         given:
         def userId = UUID.randomUUID()
-        com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto userDto = com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto.builder()
+        UserUpdatingDto userDto = UserUpdatingDto.builder()
                 .id(userId)
                 .name('NAME')
                 .nameAr('NAME_AR')
@@ -110,7 +114,7 @@ class UserServiceTest extends Specification {
         }
         1 * mockUserMapper.toUserDto(_ as UserEntity) >> { args ->
             def u = args.get(0) as UserEntity
-            com.estore.authenticationauthorizationservice.user.dto.UserDto.builder().name(u.name).nameAr(u.nameAr).contactInfo(u.contactInfo).properties(u.properties).username(u.username).enabled(u.enabled).build()
+            UserDto.builder().name(u.name).nameAr(u.nameAr).contactInfo(u.contactInfo).properties(u.properties).username(u.username).enabled(u.enabled).build()
         }
 
         expect:
@@ -125,7 +129,7 @@ class UserServiceTest extends Specification {
     def "should not update a non existing user and throw ResourceNotFoundException"() {
         given:
         def userId = UUID.randomUUID()
-        com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto userDto = com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto.builder()
+        UserUpdatingDto userDto = UserUpdatingDto.builder()
                 .id(userId)
                 .build()
 
@@ -136,7 +140,7 @@ class UserServiceTest extends Specification {
         1 * mockUserRepository.findOneByIdAndClient_Id(userId, authenticationUser.client) >> Optional.empty()
         0 * mockUserRepository.save(_ as UserEntity)
         0 * mockUserMapper.toUserUpdatingDto(_ as UserEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException)
+        thrown(ResourceNotFoundException)
     }
 
     def "should get a page of users for client"() {
@@ -153,7 +157,7 @@ class UserServiceTest extends Specification {
             def user2 = new UserEntity()
             new PageImpl<>(List.of(user1, user2))
         }
-        2 * mockUserMapper.toUserDto(_ as UserEntity) >> com.estore.authenticationauthorizationservice.user.dto.UserDto.builder().build()
+        2 * mockUserMapper.toUserDto(_ as UserEntity) >> UserDto.builder().build()
 
         expect:
         usersPage.size == 2
@@ -175,7 +179,7 @@ class UserServiceTest extends Specification {
             def user2 = new UserEntity()
             new PageImpl<>(List.of(user1, user2))
         }
-        2 * mockUserMapper.toUserDto(_ as UserEntity) >> com.estore.authenticationauthorizationservice.user.dto.UserDto.builder().build()
+        2 * mockUserMapper.toUserDto(_ as UserEntity) >> UserDto.builder().build()
 
         expect:
         usersPage.size == 2
@@ -197,7 +201,7 @@ class UserServiceTest extends Specification {
         }
         1 * mockUserMapper.toUserDto(_ as UserEntity) >> { args ->
             def u = args.get(0) as UserEntity
-            com.estore.authenticationauthorizationservice.user.dto.UserDto.builder().id(u.id).build()
+            UserDto.builder().id(u.id).build()
         }
 
         expect:
@@ -214,7 +218,7 @@ class UserServiceTest extends Specification {
         then:
         1 * mockUserRepository.findOneByIdAndClient_Id(userId, authenticationUser.client) >> Optional.empty()
         0 * mockUserMapper.toUserDto(_ as UserEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException)
+        thrown(ResourceNotFoundException)
     }
 
     def "should delete an existing user by id"() {
@@ -245,6 +249,6 @@ class UserServiceTest extends Specification {
         then:
         1 * mockUserRepository.findOneByIdAndClient_Id(userId, authenticationUser.client) >> Optional.empty()
         0 * mockUserRepository.delete(_ as UserEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException)
+        thrown(ResourceNotFoundException)
     }
 }

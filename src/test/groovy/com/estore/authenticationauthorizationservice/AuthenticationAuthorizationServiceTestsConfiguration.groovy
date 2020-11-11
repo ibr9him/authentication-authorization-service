@@ -1,6 +1,7 @@
 package com.estore.authenticationauthorizationservice
 
-
+import com.estore.authenticationauthorizationservice.user.UserEntity
+import com.estore.authenticationauthorizationservice.user.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -12,14 +13,14 @@ import javax.annotation.PostConstruct
 class AuthenticationAuthorizationServiceTestsConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    com.estore.authenticationauthorizationservice.user.UserRepository userRepository
+    UserRepository userRepository
 
     @Autowired
     PasswordEncoder passwordEncoder
 
     @PostConstruct
     void setupToken() {
-        com.estore.authenticationauthorizationservice.user.UserEntity u = new com.estore.authenticationauthorizationservice.user.UserEntity()
+        UserEntity u = new UserEntity()
         u.setUsername("test_user")
         u.setPassword(passwordEncoder.encode("test_user"))
         userRepository.save(u)

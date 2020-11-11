@@ -1,18 +1,12 @@
 package com.estore.authenticationauthorizationservice.client.dto;
 
-import com.estore.authenticationauthorizationservice.util.JsonViews;
-import com.estore.authenticationauthorizationservice.activity.dto.ActivityDto;
-import com.estore.authenticationauthorizationservice.subscription.dto.SubscriptionDto;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Null;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -41,14 +35,6 @@ public class ClientUpdatingDto implements Serializable {
 
     @Builder.Default
     private boolean enabled = false;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @Builder.Default
-    private Set<SubscriptionDto> subscriptions = new HashSet<>();
-
-    @JsonView(JsonViews.Base.class)
-    private ActivityDto activity;
 
     public void setContactInfo(JsonNode contactInfo) {
         this.contactInfo = contactInfo.toString();

@@ -1,6 +1,7 @@
 package com.estore.authenticationauthorizationservice.user
 
-
+import com.estore.authenticationauthorizationservice.client.ClientEntity
+import com.estore.authenticationauthorizationservice.config.DataAccessConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -13,7 +14,7 @@ import javax.persistence.EntityManager
 
 @ActiveProfiles("Test")
 @DataJpaTest
-@Import(com.estore.authenticationauthorizationservice.config.DataAccessConfiguration.class)
+@Import(DataAccessConfiguration.class)
 class UserRepositoryIntegrationTest extends Specification {
 
     @Autowired
@@ -60,11 +61,11 @@ class UserRepositoryIntegrationTest extends Specification {
 
     def "should find user by id and clientId"() {
         given:
-        def setupClient = new com.estore.authenticationauthorizationservice.client.ClientEntity()
+        def setupClient = new ClientEntity()
         setupClient.setName('TEST')
         setupClient.setNameAr('TEST_AR')
         entityManager.persist(setupClient)
-        def client = entityManager.createQuery("select c from ClientEntity c where c.name='TEST'", com.estore.authenticationauthorizationservice.client.ClientEntity.class).getSingleResult()
+        def client = entityManager.createQuery("select c from ClientEntity c where c.name='TEST'", ClientEntity.class).getSingleResult()
         def setupUser = new UserEntity()
         setupUser.setName('NAME')
         setupUser.setNameAr('NAME_AR')
@@ -106,16 +107,16 @@ class UserRepositoryIntegrationTest extends Specification {
 
     def "should find all users by search query and clientId"() {
         given:
-        def setupClient = new com.estore.authenticationauthorizationservice.client.ClientEntity()
+        def setupClient = new ClientEntity()
         setupClient.setName("TEST1")
         setupClient.setNameAr("TEST_AR1")
         entityManager.persist(setupClient)
-        def client1 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST1'", com.estore.authenticationauthorizationservice.client.ClientEntity.class).getSingleResult()
-        setupClient = new com.estore.authenticationauthorizationservice.client.ClientEntity()
+        def client1 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST1'", ClientEntity.class).getSingleResult()
+        setupClient = new ClientEntity()
         setupClient.setName("TEST2")
         setupClient.setNameAr("TEST_AR2")
         entityManager.persist(setupClient)
-        def client2 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST2'", com.estore.authenticationauthorizationservice.client.ClientEntity.class).getSingleResult()
+        def client2 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST2'", ClientEntity.class).getSingleResult()
         def setupUser = new UserEntity()
         setupUser.setName('NAME1')
         setupUser.setNameAr('NAME_AR1')
@@ -147,16 +148,16 @@ class UserRepositoryIntegrationTest extends Specification {
 
     def "should find all users by clientId"() {
         given:
-        def setupClient = new com.estore.authenticationauthorizationservice.client.ClientEntity()
+        def setupClient = new ClientEntity()
         setupClient.setName("TEST1")
         setupClient.setNameAr("TEST_AR1")
         entityManager.persist(setupClient)
-        def client1 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST1'", com.estore.authenticationauthorizationservice.client.ClientEntity.class).getSingleResult()
-        setupClient = new com.estore.authenticationauthorizationservice.client.ClientEntity()
+        def client1 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST1'", ClientEntity.class).getSingleResult()
+        setupClient = new ClientEntity()
         setupClient.setName("TEST2")
         setupClient.setNameAr("TEST_AR2")
         entityManager.persist(setupClient)
-        def client2 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST2'", com.estore.authenticationauthorizationservice.client.ClientEntity.class).getSingleResult()
+        def client2 = entityManager.createQuery("select c from ClientEntity c where c.name='TEST2'", ClientEntity.class).getSingleResult()
         def setupUser = new UserEntity()
         setupUser.setName('NAME1')
         setupUser.setNameAr('NAME_AR1')

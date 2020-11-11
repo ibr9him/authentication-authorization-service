@@ -2,7 +2,6 @@ package com.estore.authenticationauthorizationservice.user;
 
 import com.estore.authenticationauthorizationservice.client.ClientMapper;
 import com.estore.authenticationauthorizationservice.role.RoleMapper;
-import com.estore.authenticationauthorizationservice.structure.StructureLevelMapper;
 import com.estore.authenticationauthorizationservice.user.dto.UserCreationDto;
 import com.estore.authenticationauthorizationservice.user.dto.UserDto;
 import com.estore.authenticationauthorizationservice.user.dto.UserUpdatingDto;
@@ -12,9 +11,8 @@ import org.mapstruct.ReportingPolicy;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {ClientMapper.class, RoleMapper.class, StructureLevelMapper.class})
-public
-interface UserMapper {
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {ClientMapper.class, RoleMapper.class})
+public interface UserMapper {
 
     UserEntity toEntity(UserDto userDto);
 

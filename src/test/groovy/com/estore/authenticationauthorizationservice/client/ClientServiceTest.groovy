@@ -1,9 +1,10 @@
 package com.estore.authenticationauthorizationservice.client
 
-
-import com.estore.authenticationauthorizationservice.activity.ActivityMapper
-import com.estore.authenticationauthorizationservice.activity.dto.ActivityDto
+import com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto
 import com.estore.authenticationauthorizationservice.client.dto.ClientDto
+import com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto
+import com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException
+import com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import spock.lang.Specification
@@ -13,13 +14,12 @@ class ClientServiceTest extends Specification {
 
     ClientRepository mockClientRepository = Mock(ClientRepository.class)
     ClientMapper mockClientMapper = Mock(ClientMapper.class)
-    ActivityMapper mockActivityMapper = Mock(ActivityMapper.class)
     @Subject
-    ClientService clientService = new ClientService(mockClientRepository, mockClientMapper, mockActivityMapper)
+    ClientService clientService = new ClientService(mockClientRepository, mockClientMapper)
 
     def "should save a new client"() {
         given:
-        def clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto.builder().name('name').nameAr('nameAr').build()
+        def clientDto = ClientCreationDto.builder().name('name').nameAr('nameAr').build()
 
         when:
         clientService.save(clientDto)
@@ -27,7 +27,7 @@ class ClientServiceTest extends Specification {
         then:
         1 * mockClientRepository.findOneByNameIgnoreCase('name') >> Optional.empty()
         1 * mockClientRepository.findOneByNameArIgnoreCase('nameAr') >> Optional.empty()
-        1 * mockClientMapper.toEntity(_ as com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto) >> new ClientEntity()
+        1 * mockClientMapper.toEntity(_ as ClientCreationDto) >> new ClientEntity()
         1 * mockClientRepository.save(_ as ClientEntity) >> {
             def mockClient = new ClientEntity()
             mockClient.setId(UUID.randomUUID())
@@ -38,7 +38,7 @@ class ClientServiceTest extends Specification {
 
     def "should not save a new client if name already exists and throw ResourceKeyValueAlreadyExistsException"() {
         given:
-        def clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto.builder().name('name').nameAr('nameAr').build()
+        def clientDto = ClientCreationDto.builder().name('name').nameAr('nameAr').build()
 
         when:
         clientService.save(clientDto)
@@ -46,15 +46,15 @@ class ClientServiceTest extends Specification {
         then:
         1 * mockClientRepository.findOneByNameIgnoreCase('name') >> Optional.of(new ClientEntity())
         0 * mockClientRepository.findOneByNameArIgnoreCase('nameAr')
-        0 * mockClientMapper.toEntity(_ as com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto)
+        0 * mockClientMapper.toEntity(_ as ClientCreationDto)
         0 * mockClientRepository.save(_ as ClientEntity)
         0 * mockClientMapper.toClientDto(_ as ClientEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException)
+        thrown(ResourceKeyValueAlreadyExistsException)
     }
 
     def "should not save a new client if nameAr already exists and throw ResourceKeyValueAlreadyExistsException"() {
         given:
-        def clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto.builder().name('name').nameAr('nameAr').build()
+        def clientDto = ClientCreationDto.builder().name('name').nameAr('nameAr').build()
 
         when:
         clientService.save(clientDto)
@@ -62,23 +62,22 @@ class ClientServiceTest extends Specification {
         then:
         1 * mockClientRepository.findOneByNameIgnoreCase('name') >> Optional.empty()
         1 * mockClientRepository.findOneByNameArIgnoreCase('nameAr') >> Optional.of(new ClientEntity())
-        0 * mockClientMapper.toEntity(_ as com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto)
+        0 * mockClientMapper.toEntity(_ as ClientCreationDto)
         0 * mockClientRepository.save(_ as ClientEntity)
         0 * mockClientMapper.toClientDto(_ as ClientEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException)
+        thrown(ResourceKeyValueAlreadyExistsException)
     }
 
     def "should update an existing client"() {
         given:
         def id = UUID.randomUUID()
-        com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto.builder()
+        ClientUpdatingDto clientDto = ClientUpdatingDto.builder()
                 .id(id)
                 .name('name')
                 .nameAr('nameAr')
                 .contactInfo('{}')
                 .properties('{}')
                 .enabled(true)
-                .activity(ActivityDto.builder().build())
                 .build()
 
         when:
@@ -105,7 +104,7 @@ class ClientServiceTest extends Specification {
     def "should not update an existing client if name already exists and throw ResourceKeyValueAlreadyExistsException"() {
         given:
         def id = UUID.randomUUID()
-        com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto.builder().id(id).name('name').nameAr('nameAr').build()
+        ClientUpdatingDto clientDto = ClientUpdatingDto.builder().id(id).name('name').nameAr('nameAr').build()
 
         when:
         clientService.update(clientDto)
@@ -120,13 +119,13 @@ class ClientServiceTest extends Specification {
         0 * mockClientRepository.findById(id) >> Optional.empty()
         0 * mockClientRepository.save(_ as ClientEntity)
         0 * mockClientMapper.toClientDto(_ as ClientEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException)
+        thrown(ResourceKeyValueAlreadyExistsException)
     }
 
     def "should not update an existing client if nameAr already exists and throw ResourceKeyValueAlreadyExistsException"() {
         given:
         def id = UUID.randomUUID()
-        com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto.builder().id(id).name('name').nameAr('nameAr').build()
+        ClientUpdatingDto clientDto = ClientUpdatingDto.builder().id(id).name('name').nameAr('nameAr').build()
 
         when:
         clientService.update(clientDto)
@@ -137,13 +136,13 @@ class ClientServiceTest extends Specification {
         0 * mockClientRepository.findById(id) >> Optional.empty()
         0 * mockClientRepository.save(_ as ClientEntity)
         0 * mockClientMapper.toClientDto(_ as ClientEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException)
+        thrown(ResourceKeyValueAlreadyExistsException)
     }
 
     def "should not update a non existing client and throw ResourceNotFoundException"() {
         given:
         def id = UUID.randomUUID()
-        com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto clientDto = com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto.builder().id(id).name('name').nameAr('nameAr').build()
+        ClientUpdatingDto clientDto = ClientUpdatingDto.builder().id(id).name('name').nameAr('nameAr').build()
 
         when:
         clientService.update(clientDto)
@@ -154,7 +153,7 @@ class ClientServiceTest extends Specification {
         1 * mockClientRepository.findById(id) >> Optional.empty()
         0 * mockClientRepository.save(_ as ClientEntity)
         0 * mockClientMapper.toClientDto(_ as ClientEntity)
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException)
+        thrown(ResourceNotFoundException)
     }
 
     def "should get a client given by id"() {
@@ -190,7 +189,7 @@ class ClientServiceTest extends Specification {
 
         then:
         1 * mockClientRepository.findById(_ as UUID) >> Optional.empty()
-        thrown(com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException)
+        thrown(ResourceNotFoundException)
     }
 
     def "should get a clients page"() {

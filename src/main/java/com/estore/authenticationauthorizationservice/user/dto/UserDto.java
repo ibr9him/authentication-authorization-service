@@ -1,13 +1,10 @@
 package com.estore.authenticationauthorizationservice.user.dto;
 
 import com.estore.authenticationauthorizationservice.role.dto.RoleDto;
-import com.estore.authenticationauthorizationservice.structure.dto.StructureLevelDto;
 import com.estore.authenticationauthorizationservice.util.Constants;
-import com.estore.authenticationauthorizationservice.util.JsonViewSerializer;
 import com.estore.authenticationauthorizationservice.util.JsonViews;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -49,10 +46,6 @@ public class UserDto {
 
     @JsonView({JsonViews.Detailed.class})
     private RoleDto role;
-
-    @JsonView({JsonViews.Detailed.class})
-    @JsonSerialize(using = JsonViewSerializer.RelationalBase.class)
-    private StructureLevelDto structureLevel;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonView({JsonViews.Detailed.class})

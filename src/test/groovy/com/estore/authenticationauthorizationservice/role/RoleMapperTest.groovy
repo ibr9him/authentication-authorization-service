@@ -1,10 +1,10 @@
 package com.estore.authenticationauthorizationservice.role
 
-
 import com.estore.authenticationauthorizationservice.client.dto.ClientDto
-import com.estore.authenticationauthorizationservice.role.RoleMapperImpl
 import com.estore.authenticationauthorizationservice.role.authority.Authority
+import com.estore.authenticationauthorizationservice.role.dto.RoleCreationDto
 import com.estore.authenticationauthorizationservice.role.dto.RoleDto
+import com.estore.authenticationauthorizationservice.role.dto.RoleUpdatingDto
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -38,7 +38,7 @@ class RoleMapperTest extends Specification {
 
     def "should convert from role creation dto to entity"() {
         given:
-        def roleDto = com.estore.authenticationauthorizationservice.role.dto.RoleCreationDto.builder()
+        def roleDto = RoleCreationDto.builder()
                 .name('NAME')
                 .nameAr('NAME_AR')
                 .code('CODE')
@@ -60,7 +60,7 @@ class RoleMapperTest extends Specification {
 
     def "should convert from role updating dto to entity"() {
         given:
-        def roleDto = com.estore.authenticationauthorizationservice.role.dto.RoleUpdatingDto.builder()
+        def roleDto = RoleUpdatingDto.builder()
                 .name('NAME')
                 .nameAr('NAME_AR')
                 .code('CODE')

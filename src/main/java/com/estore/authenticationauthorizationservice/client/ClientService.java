@@ -1,11 +1,10 @@
 package com.estore.authenticationauthorizationservice.client;
 
 import com.estore.authenticationauthorizationservice.client.dto.ClientCreationDto;
+import com.estore.authenticationauthorizationservice.client.dto.ClientDto;
 import com.estore.authenticationauthorizationservice.client.dto.ClientUpdatingDto;
 import com.estore.authenticationauthorizationservice.util.exception.ResourceKeyValueAlreadyExistsException;
 import com.estore.authenticationauthorizationservice.util.exception.ResourceNotFoundException;
-import com.estore.authenticationauthorizationservice.activity.ActivityMapper;
-import com.estore.authenticationauthorizationservice.client.dto.ClientDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,7 +22,6 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
-    private final ActivityMapper activityMapper;
 
     @Transactional
     public ClientDto save(ClientCreationDto clientDto) {
@@ -67,7 +65,6 @@ public class ClientService {
                     existingClientEntity.setContactInfo(clientDto.getContactInfo());
                     existingClientEntity.setProperties(clientDto.getProperties());
                     existingClientEntity.setEnabled(clientDto.isEnabled());
-                    existingClientEntity.setActivity(activityMapper.toEntity(clientDto.getActivity()));
                     existingClientEntity = clientRepository.save(existingClientEntity);
                     log.info("Updating client done.");
                     return existingClientEntity;

@@ -1,11 +1,7 @@
 package com.estore.authenticationauthorizationservice.client;
 
-import com.estore.authenticationauthorizationservice.activity.ActivityEntity;
-import com.estore.authenticationauthorizationservice.subscription.SubscriptionEntity;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,7 +11,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -45,15 +40,6 @@ public class ClientEntity {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled = false;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "activity_id")
-    private ActivityEntity activity;
-
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<SubscriptionEntity> subscriptions;
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, updatable = false)

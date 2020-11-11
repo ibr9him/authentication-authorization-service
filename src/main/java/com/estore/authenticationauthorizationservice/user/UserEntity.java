@@ -2,7 +2,6 @@ package com.estore.authenticationauthorizationservice.user;
 
 import com.estore.authenticationauthorizationservice.role.RoleEntity;
 import com.estore.authenticationauthorizationservice.client.ClientEntity;
-import com.estore.authenticationauthorizationservice.structure.StructureLevelEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -54,12 +53,6 @@ public class UserEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private ClientEntity client;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "structure_level_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private StructureLevelEntity structureLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")

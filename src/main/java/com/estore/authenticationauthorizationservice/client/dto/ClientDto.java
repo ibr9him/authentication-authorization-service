@@ -1,21 +1,15 @@
 package com.estore.authenticationauthorizationservice.client.dto;
 
-import com.estore.authenticationauthorizationservice.util.JsonViewSerializer;
 import com.estore.authenticationauthorizationservice.util.JsonViews;
-import com.estore.authenticationauthorizationservice.activity.dto.ActivityDto;
-import com.estore.authenticationauthorizationservice.subscription.dto.SubscriptionDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -49,16 +43,6 @@ public class ClientDto implements Serializable {
     @Builder.Default
     @JsonView({JsonViews.Detailed.class})
     private boolean enabled = false;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @Builder.Default
-    @JsonView({JsonViews.Detailed.class})
-    private Set<SubscriptionDto> subscriptions = new HashSet<>();
-
-    @JsonView({JsonViews.Detailed.class})
-    @JsonSerialize(using = JsonViewSerializer.RelationalBase.class)
-    private ActivityDto activity;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonView({JsonViews.Detailed.class})
